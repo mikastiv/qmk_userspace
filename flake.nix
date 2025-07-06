@@ -1,5 +1,5 @@
 {
-  description = "LLVM build flake";
+  description = "qmk flake";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

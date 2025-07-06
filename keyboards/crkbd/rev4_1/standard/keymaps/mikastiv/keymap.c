@@ -110,3 +110,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
+#define CUSTOM_RED 0, 255, rgb_matrix_get_val()
+
+static void init_rgb_matrix(void) {
+#ifdef RGB_MATRIX_ENABLE
+    rgb_matrix_enable_noeeprom();
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+    rgb_matrix_sethsv_noeeprom(CUSTOM_RED);
+#endif
+}
+
+void keyboard_post_init_user(void) {
+    init_rgb_matrix();
+}
+
+void suspend_wakeup_init_user(void) {
+    layer_state_set(QWERTY);
+    init_rgb_matrix();
+}
