@@ -90,14 +90,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [GAMING] = LAYOUT_split_3x6_3_ex2(
   //,--------------------------------------------------------------.  ,--------------------------------------------------------------.
-      QK_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+       KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T, KC_LCBR,    KC_RCBR,    KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,  KC_BSPC,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-      RM_TOGG, RM_HUEU, RM_SATU, RM_VALU, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      KC_LALT,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G, KC_LBRC,    KC_RBRC,    KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
   //|--------+--------+--------+--------+--------+--------+--------'  '--------+--------+--------+--------+--------+--------+--------|
-      RM_NEXT, RM_HUED, RM_SATD, RM_VALD, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      KC_LCTL,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,  KC_ESC,
   //|--------+--------+--------+--------+--------+--------+--------.  ,--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_RALT
+                                          KC_LGUI,     LOW,  KC_SPC,    KC_LSFT,     RSE,  KC_ENT
                                       //`--------------------------'  `--------------------------'
+
   ),
 
     [GAMING_LOWER] = LAYOUT_split_3x6_3_ex2(
@@ -113,13 +114,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   ),
 };
 
-#define CUSTOM_RED 0, 255, rgb_matrix_get_val()
+#define CUSTOM_WHITE     0, 0, rgb_matrix_get_val()
+#define CUSTOM_RED       0, 255, rgb_matrix_get_val()
 
 static void init_rgb_matrix(void) {
 #ifdef RGB_MATRIX_ENABLE
     rgb_matrix_enable_noeeprom();
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
-    rgb_matrix_sethsv_noeeprom(CUSTOM_RED);
+    rgb_matrix_sethsv_noeeprom(CUSTOM_WHITE);
 #endif
 }
 
@@ -130,4 +132,19 @@ void keyboard_post_init_user(void) {
 void suspend_wakeup_init_user(void) {
     layer_state_set(QWERTY);
     init_rgb_matrix();
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+#ifdef RGB_MATRIX_ENABLE
+    switch(get_highest_layer(state)) {
+        case GAMING:
+        case GAMING_LOWER:
+            rgb_matrix_sethsv_noeeprom(CUSTOM_RED);
+            break;
+        default:
+            rgb_matrix_sethsv_noeeprom(CUSTOM_WHITE);
+            break;
+    }
+#endif
+    return state;
 }

@@ -28,6 +28,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#define TAPPING_TERM 100
 
 #ifdef RGB_MATRIX_ENABLE
+    #ifdef RGB_MATRIX_MAXIMUM_BRIGHTNESS
+        #undef RGB_MATRIX_MAXIMUM_BRIGHTNESS 
+    #endif
+
+    #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 150
     #define RGB_MATRIX_SLEEP
+    #define RGB_MATRIX_DEFAULT_VAL RGB_MATRIX_MAXIMUM_BRIGHTNESS
     #define ENABLE_RGB_MATRIX_SOLID_COLOR
 #endif
