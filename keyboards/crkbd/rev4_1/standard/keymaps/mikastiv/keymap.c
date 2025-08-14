@@ -39,6 +39,7 @@ combo_t key_combos[] = {
 #define G_LOW MO(GAMING_LOWER)
 #define TO_GAME TO(GAMING)
 #define TO_QWER TO(QWERTY)
+#define TO_FUNC TO(FUNC)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [QWERTY] = LAYOUT_split_3x6_3_ex2(
@@ -58,7 +59,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,--------------------------------------------------------------.  ,--------------------------------------------------------------.
        KC_TAB, KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC, XXXXXXX,    XXXXXXX, KC_CIRC, KC_AMPR, KC_ASTR, KC_TILD, XXXXXXX,  KC_DEL,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-      KC_LALT,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5, XXXXXXX,    XXXXXXX, KC_MINS,  KC_EQL, KC_LPRN, KC_RPRN, KC_PIPE,  KC_GRV,
+      KC_LALT,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5, TO_FUNC,    XXXXXXX, KC_MINS,  KC_EQL, KC_LPRN, KC_RPRN, KC_PIPE,  KC_GRV,
   //|--------+--------+--------+--------+--------+--------+--------'  '--------+--------+--------+--------+--------+--------+--------|
       KC_LCTL,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,                      KC_UNDS, KC_PLUS,   KC_LT,   KC_GT, KC_BSLS, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------.  ,--------+--------+--------+--------+--------+--------+--------|
@@ -80,13 +81,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [FUNC] = LAYOUT_split_3x6_3_ex2(
   //,--------------------------------------------------------------.  ,--------------------------------------------------------------.
-      QK_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      XXXXXXX,   KC_F1,   KC_F2,   KC_F3,   KC_F4, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-      RM_TOGG, RM_HUEU, RM_SATU, RM_VALU, XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      KC_LALT,   KC_F5,   KC_F6,   KC_F7,   KC_F8, XXXXXXX, TO_QWER,    XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------'  '--------+--------+--------+--------+--------+--------+--------|
-      RM_NEXT, RM_HUED, RM_SATD, RM_VALD, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+      KC_LCTL,   KC_F9,  KC_F10,  KC_F11,  KC_F12, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   //|--------+--------+--------+--------+--------+--------+--------.  ,--------+--------+--------+--------+--------+--------+--------|
-                                          XXXXXXX, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, XXXXXXX
+                                          XXXXXXX, XXXXXXX, _______,    XXXXXXX, XXXXXXX, XXXXXXX
                                       //`--------------------------'  `--------------------------'
   ),
 
@@ -118,6 +119,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 #define CUSTOM_WHITE 0, 0, rgb_matrix_get_val()
 #define CUSTOM_RED   0, 255, rgb_matrix_get_val()
+#define CUSTOM_BLUE  170, 255, rgb_matrix_get_val()
 
 static void init_rgb_matrix(void) {
 #ifdef RGB_MATRIX_ENABLE
@@ -142,6 +144,9 @@ layer_state_t layer_state_set_user(layer_state_t state) {
         case GAMING:
         case GAMING_LOWER:
             rgb_matrix_sethsv_noeeprom(CUSTOM_RED);
+            break;
+        case FUNC:
+            rgb_matrix_sethsv_noeeprom(CUSTOM_BLUE);
             break;
         default:
             rgb_matrix_sethsv_noeeprom(CUSTOM_WHITE);
