@@ -60,7 +60,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #define CUSTOM_BLUE  170, 255, rgb_matrix_get_val()
 
 static void init_rgb_matrix(void) {
-#ifdef CONVERTER_ENABLED
+#ifdef RGB_MATRIX_ENABLE
     rgb_matrix_enable_noeeprom();
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
     rgb_matrix_sethsv_noeeprom(CUSTOM_WHITE);
@@ -78,7 +78,7 @@ void suspend_wakeup_init_user(void) {
 
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-#ifdef CONVERTER_ENABLED
+#ifdef RGB_MATRIX_ENABLE
     switch(get_highest_layer(state)) {
         case GAMING:
             rgb_matrix_sethsv_noeeprom(CUSTOM_RED);
