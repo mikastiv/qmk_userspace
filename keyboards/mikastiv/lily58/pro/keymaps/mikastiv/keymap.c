@@ -88,24 +88,22 @@ render_small_mb_logo(void) {
 static uint8_t last_hue;
 static uint8_t last_sat;
 static uint8_t last_val;
-static uint8_t last_mode;
 
 static void
 render_rgb_info(void) {
     last_hue = rgb_matrix_get_hue();
     last_sat = rgb_matrix_get_sat();
     last_val = rgb_matrix_get_val();
-    last_mode = rgb_matrix_get_mode();
-    oled_set_cursor(0, 6);
+    oled_set_cursor(0, 10);
     oled_write("H:", false);
     oled_write(depad_str(get_u16_str(last_hue, ' '), ' '), false);
-    oled_set_cursor(0, 7);
+    oled_set_cursor(0, 11);
     oled_write("S:", false);
     oled_write_ln(depad_str(get_u16_str(last_sat, ' '), ' '), false);
-    oled_set_cursor(0, 8);
+    oled_set_cursor(0, 12);
     oled_write("V:", false);
     oled_write_ln(depad_str(get_u16_str(last_val, ' '), ' '), false);
-    oled_set_cursor(0, 9);
+    oled_set_cursor(0, 13);
 }
 
 static const char*
@@ -195,22 +193,20 @@ process_detected_host_os_user(os_variant_t detected_os) {
 }
 
 static void
-oled_reinit_slave(void) {
-    oled_init(OLED_ROTATION_270);
-    oled_clear();
+oled_init_slave(void) {
     oled_set_cursor(0, 0);
     oled_write_ln("WPM", false);
     render_spacer(3);
     oled_advance_page(false);
     oled_write_ln(depad_str(get_u16_str(get_current_wpm(), ' '), ' '), false);
 
-    oled_set_cursor(0, 4);
-    oled_write_ln("RGB", false);
-    render_spacer(3);
-    render_rgb_info();
-
     oled_set_cursor(0, 13);
     render_small_mb_logo();
+}
+
+oled_rotation_t
+oled_init_user(oled_rotation_t rotation) {
+    return OLED_ROTATION_270;
 }
 
 bool
@@ -219,7 +215,7 @@ oled_task_user(void) {
 
     if (!oled_init_done) {
         if (!is_keyboard_master()) {
-            oled_reinit_slave();
+            oled_init_slave();
         } else {
             oled_set_cursor(0, 0);
             oled_write("Layer", false);
@@ -231,6 +227,11 @@ oled_task_user(void) {
             render_spacer(2);
             oled_advance_page(false);
             oled_write_ln("Wait", false);
+
+            oled_set_cursor(0, 8);
+            oled_write_ln("RGB", false);
+            render_spacer(3);
+            render_rgb_info();
         }
 
         oled_init_done = true;
@@ -239,12 +240,11 @@ oled_task_user(void) {
     if (is_keyboard_master()) {
         oled_set_cursor(0, 2);
         oled_write_ln(layer_string(get_highest_layer(layer_state)), false);
-    } else {
-        static uint16_t last_wpm = 0;
-        if (rgb_matrix_get_hue() != last_hue || rgb_matrix_get_sat() != last_sat || rgb_matrix_get_val() != last_val ||
-            rgb_matrix_get_mode() != last_mode) {
+        if (rgb_matrix_get_hue() != last_hue || rgb_matrix_get_sat() != last_sat || rgb_matrix_get_val() != last_val) {
             render_rgb_info();
         }
+    } else {
+        static uint16_t last_wpm = 0;
         if (last_wpm != get_current_wpm()) {
             last_wpm = get_current_wpm();
             oled_set_cursor(0, 2);
