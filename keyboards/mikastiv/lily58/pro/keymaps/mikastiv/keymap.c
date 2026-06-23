@@ -76,39 +76,41 @@ render_spacer(uint8_t char_length) {
 }
 
 static void
-render_small_mb_logo(void) {
-    static const char PROGMEM small_mb_logo[] = {
-        112, 112, 112, 0,   112, 112, 112, 0,   112, 112, 112, 0,   112, 112, 112, 0,   112, 112, 112, 0,   0,   119,
-        119, 119, 0,   112, 112, 112, 0,   112, 112, 112, 119, 119, 119, 0,   0,   0,   0,   0,   119, 119, 119, 0,
-        0,   0,   0,   0,   119, 119, 119, 0,   0,   119, 119, 119, 0,   112, 112, 112, 0,   119, 119, 119,
+render_logo(void) {
+    // Zig logo
+    static const char PROGMEM raw_logo[] = {
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   128, 128, 192, 192, 96,  32,  16,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   255, 255, 255, 255, 15,  15,  7,   3,   9,   12,  14,  15,  143, 207, 239, 255, 255, 255, 127, 63,  31,
+        15,  7,   3,   9,   12,  254, 255, 255, 255, 0,   0,   0,   0,   0,   7,   7,   7,   7,   7,   7,   135, 199,
+        231, 247, 127, 63,  31,  15,  7,   0,   0,   255, 255, 255, 0,   0,   248, 252, 254, 15,  7,   7,   7,   7,
+        7,   7,   7,   7,   15,  62,  60,  56,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   255, 255, 127,
+        63,  144, 192, 224, 240, 248, 252, 254, 255, 255, 255, 247, 243, 241, 240, 240, 112, 48,  144, 192, 224, 240,
+        240, 255, 255, 255, 255, 0,   0,   0,   0,   0,   224, 240, 248, 252, 254, 239, 231, 227, 225, 224, 224, 224,
+        224, 224, 224, 0,   0,   255, 255, 255, 0,   0,   31,  63,  127, 240, 224, 224, 224, 225, 225, 225, 227, 227,
+        243, 127, 63,  31,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   8,   4,   6,   3,   3,   1,   1,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+        0,   0,   0,   0,   0,   0,
     };
-    oled_write_raw_P(small_mb_logo, sizeof(small_mb_logo));
-}
-
-static uint8_t last_hue;
-static uint8_t last_sat;
-static uint8_t last_val;
-
-static void
-render_rgb_info(void) {
-    last_hue = rgb_matrix_get_hue();
-    last_sat = rgb_matrix_get_sat();
-    last_val = rgb_matrix_get_val();
-    oled_set_cursor(0, 10);
-    oled_write("H:", false);
-    oled_write(depad_str(get_u16_str(last_hue, ' '), ' '), false);
-    oled_set_cursor(0, 11);
-    oled_write("S:", false);
-    oled_write_ln(depad_str(get_u16_str(last_sat, ' '), ' '), false);
-    oled_set_cursor(0, 12);
-    oled_write("V:", false);
-    oled_write_ln(depad_str(get_u16_str(last_val, ' '), ' '), false);
-    oled_set_cursor(0, 13);
+    oled_write_raw_P(raw_logo, sizeof(raw_logo));
 }
 
 static const char*
 layer_string(uint32_t layer) {
     char* layer_str;
+
     switch (layer) {
         case QWERTY:
             layer_str = "Base";
@@ -192,21 +194,18 @@ process_detected_host_os_user(os_variant_t detected_os) {
     return false;
 }
 
-static void
-oled_init_slave(void) {
-    oled_set_cursor(0, 0);
-    oled_write_ln("WPM", false);
-    render_spacer(3);
-    oled_advance_page(false);
-    oled_write_ln(depad_str(get_u16_str(get_current_wpm(), ' '), ' '), false);
-
-    oled_set_cursor(0, 13);
-    render_small_mb_logo();
-}
-
 oled_rotation_t
 oled_init_user(oled_rotation_t rotation) {
-    return OLED_ROTATION_270;
+    if (is_keyboard_master()) {
+        return OLED_ROTATION_270;
+    }
+    return OLED_ROTATION_180;
+}
+
+static void
+render_wpm(uint16_t wpm) {
+    oled_set_cursor(0, 10);
+    oled_write_ln(depad_str(get_u16_str(wpm, ' '), ' '), false);
 }
 
 bool
@@ -215,12 +214,11 @@ oled_task_user(void) {
 
     if (!oled_init_done) {
         if (!is_keyboard_master()) {
-            oled_init_slave();
+            render_logo();
         } else {
             oled_set_cursor(0, 0);
             oled_write("Layer", false);
             render_spacer(5);
-            oled_write_ln(layer_string(get_highest_layer(layer_state)), false);
 
             oled_set_cursor(0, 4);
             oled_write_ln("OS", false);
@@ -229,9 +227,9 @@ oled_task_user(void) {
             oled_write_ln("Wait", false);
 
             oled_set_cursor(0, 8);
-            oled_write_ln("RGB", false);
+            oled_write_ln("WPM", false);
             render_spacer(3);
-            render_rgb_info();
+            render_wpm(get_current_wpm());
         }
 
         oled_init_done = true;
@@ -240,15 +238,12 @@ oled_task_user(void) {
     if (is_keyboard_master()) {
         oled_set_cursor(0, 2);
         oled_write_ln(layer_string(get_highest_layer(layer_state)), false);
-        if (rgb_matrix_get_hue() != last_hue || rgb_matrix_get_sat() != last_sat || rgb_matrix_get_val() != last_val) {
-            render_rgb_info();
-        }
-    } else {
+
         static uint16_t last_wpm = 0;
-        if (last_wpm != get_current_wpm()) {
-            last_wpm = get_current_wpm();
-            oled_set_cursor(0, 2);
-            oled_write_ln(depad_str(get_u16_str(last_wpm, ' '), ' '), false);
+        const uint16_t current_wpm = get_current_wpm();
+        if (last_wpm != current_wpm) {
+            last_wpm = current_wpm;
+            render_wpm(current_wpm);
         }
     }
 
