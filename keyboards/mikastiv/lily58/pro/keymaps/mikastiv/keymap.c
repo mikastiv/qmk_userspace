@@ -40,7 +40,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 
 [RAISE] = LAYOUT(
-  _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                   _______, _______, _______, _______, _______, _______,
+  _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, QK_BOOT,                   QK_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,
   _______,  KC_F1,    KC_F2,   KC_F3,   KC_F4, XXXXXXX,                      KC_6,    KC_7,    KC_8,    KC_9,    KC_0, _______,
   _______,  KC_F5,    KC_F6,   KC_F7,   KC_F8, XXXXXXX,                   KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, XXXXXXX, XXXXXXX,
   _______,  KC_F9,   KC_F10,  KC_F11,  KC_F12, XXXXXXX, _______, _______, KC_HOME, KC_PGDN, KC_PGUP,  KC_END, XXXXXXX, TO_GAME,
@@ -56,8 +56,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 )
 };
 // clang-format on
-
-static uint16_t current_keycode = 0xFF;
 
 static const char*
 depad_str(const char* depad_str, char depad_char) {
@@ -139,179 +137,27 @@ render_rgb_info(void) {
     oled_write("V:", false);
     oled_write_ln(depad_str(get_u16_str(last_val, ' '), ' '), false);
     oled_set_cursor(0, 9);
-    oled_write("M:", false);
-    oled_write_ln(depad_str(get_u16_str(last_mode, ' '), ' '), false);
-}
-
-static const char basic_codes_to_name[57] = { ' ', ' ',  ' ', ' ', 'a',  'b', 'c', 'd', 'e', 'f', 'g', 'h',
-                                              'i', 'j',  'k', 'l', 'm',  'n', 'o', 'p', 'q', 'r', 's', 't',
-                                              'u', 'v',  'w', 'x', 'y',  'z', '1', '2', '3', '4', '5', '6',
-                                              '7', '8',  '9', '0', 'R',  'E', 'B', 'T', '_', '-', '=', '[',
-                                              ']', '\\', '#', ';', '\'', '`', ',', '.', '/' };
-
-static const char*
-keycode_string(uint16_t keycode) {
-    char* keycode_str;
-    static char key;
-    switch (keycode) {
-        case 0 ... 56:
-            key = pgm_read_byte(&basic_codes_to_name[keycode]);
-            return &key;
-        case KC_CAPS:
-            keycode_str = "Caps";
-            break;
-        case KC_SCRL:
-            keycode_str = "Scrl";
-            break;
-        case KC_PAUS:
-            keycode_str = "Pause";
-            break;
-        case KC_DEL:
-            keycode_str = "Del";
-            break;
-        case KC_NUM:
-            keycode_str = "Num";
-            break;
-        case KC_MUTE:
-            keycode_str = "Mute";
-            break;
-        case KC_VOLU:
-            keycode_str = "VolUp";
-            break;
-        case KC_VOLD:
-            keycode_str = "VolD";
-            break;
-        case KC_MNXT:
-            keycode_str = "Next";
-            break;
-        case KC_MPRV:
-            keycode_str = "Prev";
-            break;
-        case KC_MSTP:
-            keycode_str = "Stop";
-            break;
-        case KC_MPLY:
-            keycode_str = "Play";
-            break;
-        case QK_MODS ... QK_MODS_MAX:
-            keycode_str = "MOD()";
-            break;
-        case QK_MOD_TAP ... QK_MOD_TAP_MAX:
-            keycode_str = "MT()";
-            break;
-        case QK_LAYER_TAP ... QK_LAYER_TAP_MAX:
-            keycode_str = "LT()";
-            break;
-        case QK_LAYER_MOD ... QK_LAYER_MOD_MAX:
-            keycode_str = "LM()";
-            break;
-        case QK_TO ... QK_TO_MAX:
-            keycode_str = "TO()";
-            break;
-        case QK_MOMENTARY ... QK_MOMENTARY_MAX:
-            keycode_str = "MO()";
-            break;
-        case QK_DEF_LAYER ... QK_DEF_LAYER_MAX:
-            keycode_str = "DF()";
-            break;
-        case QK_TOGGLE_LAYER ... QK_TOGGLE_LAYER_MAX:
-            keycode_str = "TG()";
-            break;
-        case QK_ONE_SHOT_LAYER ... QK_ONE_SHOT_MOD_MAX:
-            keycode_str = "1SHOT";
-            break;
-        case QK_LAYER_TAP_TOGGLE ... QK_LAYER_TAP_TOGGLE_MAX:
-            keycode_str = "TT()";
-            break;
-        case QK_PERSISTENT_DEF_LAYER ... QK_PERSISTENT_DEF_LAYER_MAX:
-            keycode_str = "PDF()";
-            break;
-        case QK_SWAP_HANDS ... QK_SWAP_HANDS_MAX:
-            keycode_str = "SWAP";
-            break;
-        case QK_TAP_DANCE ... QK_TAP_DANCE_MAX:
-            keycode_str = "TD()";
-            break;
-        case QK_MAGIC ... QK_MAGIC_MAX:
-            keycode_str = "Magic";
-            break;
-        case QK_MIDI ... QK_MIDI_MAX:
-            keycode_str = "Midi";
-            break;
-        case QK_SEQUENCER ... QK_SEQUENCER_MAX:
-            keycode_str = "Seq";
-            break;
-        case QK_JOYSTICK ... QK_JOYSTICK_MAX:
-            keycode_str = "Joy";
-            break;
-        case QK_PROGRAMMABLE_BUTTON ... QK_PROGRAMMABLE_BUTTON_MAX:
-            keycode_str = "Prog";
-            break;
-        case QK_AUDIO ... QK_AUDIO_MAX:
-            keycode_str = "Audio";
-            break;
-        case QK_STENO ... QK_STENO_MAX:
-            keycode_str = "Steno";
-            break;
-        case QK_MACRO ... QK_MACRO_MAX:
-            keycode_str = "Macro";
-            break;
-        case QK_CONNECTION ... QK_CONNECTION_MAX:
-            keycode_str = "Conn";
-            break;
-        case QK_LIGHTING ... QK_LIGHTING_MAX:
-            keycode_str = "Light";
-            break;
-        case QK_QUANTUM ... QK_QUANTUM_MAX:
-            keycode_str = "Quant";
-            break;
-        case QK_KB ... QK_KB_MAX:
-            keycode_str = "KB";
-            break;
-        case QK_USER ... QK_USER_MAX:
-            keycode_str = "USER";
-            break;
-        case QK_UNICODEMAP ... QK_UNICODEMAP_PAIR_MAX:
-            keycode_str = "Uni";
-            break;
-        default:
-            keycode_str = "Undef";
-            break;
-    }
-
-    return keycode_str;
 }
 
 static const char*
 layer_string(uint32_t layer) {
     char* layer_str;
     switch (layer) {
-        case 0:
-            layer_str = "Zero";
+        case QWERTY:
+            layer_str = "Base";
             break;
-        case 1:
-            layer_str = "One";
+        case LOWER:
+            layer_str = "Lower";
             break;
-        case 2:
-            layer_str = "Two";
+        case RAISE:
+            layer_str = "Raise";
             break;
-        case 3:
-            layer_str = "Three";
-            break;
-        case 4:
-            layer_str = "Four";
-            break;
-        case 5:
-            layer_str = "Five";
-            break;
-        case 6:
-            layer_str = "Six";
-            break;
-        case 7:
-            layer_str = "Seven";
+        case GAMING:
+            layer_str = "Game";
             break;
         default:
-            return get_u16_str(layer, ' ');
+            layer_str = "Undef";
+            break;
     }
 
     return layer_str;
@@ -353,14 +199,12 @@ layer_state_set_user(layer_state_t state) {
             break;
     }
 #endif
-    oled_set_cursor(0, 2);
-    oled_write_ln(layer_string(get_highest_layer(state)), false);
     return state;
 }
 
 bool
 process_detected_host_os_user(os_variant_t detected_os) {
-    oled_set_cursor(0, 10);
+    oled_set_cursor(0, 6);
     switch (detected_os) {
         case OS_MACOS:
             oled_write_ln("MacOS", false);
@@ -375,18 +219,11 @@ process_detected_host_os_user(os_variant_t detected_os) {
             break;
         case OS_UNSURE:
             oled_write_ln("Unkno", false);
-
             break;
     }
 
     return false;
 }
-
-bool
-process_record_user(uint16_t keycode, keyrecord_t* record) {
-    current_keycode = keycode;
-    return true;
-};
 
 static void
 oled_reinit_slave(void) {
@@ -410,9 +247,10 @@ oled_reinit_slave(void) {
 bool
 oled_task_user(void) {
     static bool oled_init_done = false;
+
     if (!oled_init_done) {
         if (!is_keyboard_master()) {
-            render_logo();
+            oled_reinit_slave();
         } else {
             oled_set_cursor(0, 0);
             oled_write("Layer", false);
@@ -420,12 +258,6 @@ oled_task_user(void) {
             oled_write_ln(layer_string(get_highest_layer(layer_state)), false);
 
             oled_set_cursor(0, 4);
-            oled_write_ln("Key", false);
-            render_spacer(3);
-            oled_advance_page(false);
-            oled_write_ln("None", false);
-
-            oled_set_cursor(0, 8);
             oled_write_ln("OS", false);
             render_spacer(2);
             oled_advance_page(false);
@@ -435,37 +267,19 @@ oled_task_user(void) {
         oled_init_done = true;
     }
 
-    static uint16_t last_keycode = 0xFF;
-    static bool oled_slave_init_done = false;
-
     if (is_keyboard_master()) {
-        if (last_keycode != current_keycode) {
-            oled_set_cursor(0, 6);
-            if (current_keycode < ARRAY_SIZE(basic_codes_to_name)) {
-                oled_write_char(basic_codes_to_name[current_keycode], false);
-                oled_advance_page(true);
-            } else {
-                oled_write_ln(keycode_string(current_keycode), false);
-            }
-            last_keycode = current_keycode;
-        }
+        oled_set_cursor(0, 2);
+        oled_write_ln(layer_string(get_highest_layer(layer_state)), false);
     } else {
-        if (!oled_slave_init_done) {
-            if (timer_elapsed32(0) > 5000) {
-                oled_slave_init_done = true;
-                oled_reinit_slave();
-            }
-        } else {
-            static uint16_t last_wpm = 0;
-            if (rgb_matrix_get_hue() != last_hue || rgb_matrix_get_sat() != last_sat ||
-                rgb_matrix_get_val() != last_val || rgb_matrix_get_mode() != last_mode) {
-                render_rgb_info();
-            }
-            if (last_wpm != get_current_wpm()) {
-                last_wpm = get_current_wpm();
-                oled_set_cursor(0, 2);
-                oled_write_ln(depad_str(get_u16_str(last_wpm, ' '), ' '), false);
-            }
+        static uint16_t last_wpm = 0;
+        if (rgb_matrix_get_hue() != last_hue || rgb_matrix_get_sat() != last_sat || rgb_matrix_get_val() != last_val ||
+            rgb_matrix_get_mode() != last_mode) {
+            render_rgb_info();
+        }
+        if (last_wpm != get_current_wpm()) {
+            last_wpm = get_current_wpm();
+            oled_set_cursor(0, 2);
+            oled_write_ln(depad_str(get_u16_str(last_wpm, ' '), ' '), false);
         }
     }
 
