@@ -135,13 +135,14 @@ layer_string(uint32_t layer) {
 #define CUSTOM_WHITE 0, 0, rgb_matrix_get_val()
 #define CUSTOM_RED 0, 255, rgb_matrix_get_val()
 #define CUSTOM_CYAN 115, 255, rgb_matrix_get_val()
+#define CUSTOM_BLUE 180, 255, rgb_matrix_get_val()
 
 static void
 init_rgb_matrix(void) {
 #ifdef RGB_MATRIX_ENABLE
     rgb_matrix_enable_noeeprom();
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
-    rgb_matrix_sethsv_noeeprom(CUSTOM_CYAN);
+    rgb_matrix_sethsv_noeeprom(CUSTOM_RED);
 #endif
 }
 
@@ -161,10 +162,10 @@ layer_state_set_user(layer_state_t state) {
 #ifdef RGB_MATRIX_ENABLE
     switch (get_highest_layer(state)) {
         case GAMING:
-            rgb_matrix_sethsv_noeeprom(CUSTOM_RED);
+            rgb_matrix_sethsv_noeeprom(CUSTOM_BLUE);
             break;
         default:
-            rgb_matrix_sethsv_noeeprom(CUSTOM_CYAN);
+            rgb_matrix_sethsv_noeeprom(CUSTOM_RED);
             break;
     }
 #endif
