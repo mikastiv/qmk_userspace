@@ -209,6 +209,12 @@ render_wpm(uint16_t wpm) {
     oled_write_ln(depad_str(get_u16_str(wpm, ' '), ' '), false);
 }
 
+static void
+render_layer_state(layer_state_t state) {
+    oled_set_cursor(0, 2);
+    oled_write_ln(layer_string(state), false);
+}
+
 bool
 oled_task_user(void) {
     static bool oled_init_done = false;
@@ -237,8 +243,12 @@ oled_task_user(void) {
     }
 
     if (is_keyboard_master()) {
-        oled_set_cursor(0, 2);
-        oled_write_ln(layer_string(get_highest_layer(layer_state)), false);
+        static layer_state_t last_layer = -1;
+        const layer_state_t current_layer = get_highest_layer(layer_state);
+        if (last_layer != current_layer) {
+            last_layer = current_layer;
+            render_layer_state(current_layer);
+        }
 
         static uint16_t last_wpm = 0;
         const uint16_t current_wpm = get_current_wpm();
