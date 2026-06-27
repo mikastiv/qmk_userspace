@@ -3,6 +3,7 @@
 
 #include QMK_KEYBOARD_H
 
+#include "color.h"
 #include "quantum.h"
 
 enum Layers {
@@ -132,17 +133,12 @@ layer_string(uint32_t layer) {
     return layer_str;
 }
 
-#define CUSTOM_WHITE 0, 0, rgb_matrix_get_val()
-#define CUSTOM_RED 0, 255, rgb_matrix_get_val()
-#define CUSTOM_CYAN 115, 255, rgb_matrix_get_val()
-#define CUSTOM_BLUE 180, 255, rgb_matrix_get_val()
-
 static void
 init_rgb_matrix(void) {
 #ifdef RGB_MATRIX_ENABLE
     rgb_matrix_enable_noeeprom();
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
-    rgb_matrix_sethsv_noeeprom(CUSTOM_RED);
+    rgb_matrix_sethsv_noeeprom(HSV_RED);
 #endif
 }
 
@@ -157,15 +153,28 @@ suspend_wakeup_init_user(void) {
     init_rgb_matrix();
 }
 
+bool
+rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+#ifdef RGB_MATRIX_ENABLE
+    for (uint8_t i = led_min; i < led_max; i++) {
+        if (!HAS_FLAGS(g_led_config.flags[i], LED_FLAG_UNDERGLOW)) {
+            rgb_matrix_set_color(i, 0, 0, 0);
+        }
+    }
+#endif
+
+    return true;
+}
+
 layer_state_t
 layer_state_set_user(layer_state_t state) {
 #ifdef RGB_MATRIX_ENABLE
     switch (get_highest_layer(state)) {
         case GAMING:
-            rgb_matrix_sethsv_noeeprom(CUSTOM_BLUE);
+            rgb_matrix_sethsv_noeeprom(HSV_TEAL);
             break;
         default:
-            rgb_matrix_sethsv_noeeprom(CUSTOM_RED);
+            rgb_matrix_sethsv_noeeprom(HSV_RED);
             break;
     }
 #endif
